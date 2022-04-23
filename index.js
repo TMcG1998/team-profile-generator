@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const generatePage = require('./src/page-template.js');
 
-// Array of questions for user input
+// Array of questions for manager input
 const managerQuestions = [
     {
         type: 'input',
@@ -59,7 +59,15 @@ const managerQuestions = [
     }
 ];
 
+
+// Array of questions for employee input
 const employeeQuestions = [
+    {
+        type: 'list',
+        name: 'confirmAddMember',
+        message: 'Would you like to enter another team member?',
+        choices: ['Engineer', 'Intern', 'Finish building team'],
+    },
     {
         type: 'input',
         name: 'employeeName',
@@ -71,7 +79,8 @@ const employeeQuestions = [
                 console.log('Please enter employee name!');
                 return false;
             }
-        }
+        },
+        when: (answers) => answers.confirmAddMember != 'Finish building team'
     },
     {
         type: 'input',
@@ -84,7 +93,8 @@ const employeeQuestions = [
                 console.log('Please enter employee ID!');
                 return false;
             }
-        }
+        },
+        when: (answers) => answers.confirmAddMember != 'Finish building team'
     },
     {
         type: 'input',
@@ -97,36 +107,53 @@ const employeeQuestions = [
                 console.log('Please enter employee email!');
                 return false;
             }
-        }
+        },
+        when: (answers) => answers.confirmAddMember != 'Finish building team'
     },
     {
-        type: 'list',
-        name: 'confirmAddMember',
-        message: 'Would you like to enter another team member?',
-        choices: ['Engineer', 'Intern', 'Finish building team']
+        type: 'input',
+        name: 'github',
+        message: 'What is their GitHub?',
+        validate: githubInput => {
+            if(githubInput) {
+                return true;
+            } else {
+                console.log('Please enter employee name!');
+                return false;
+            }
+        },
+        when: (answers) => answers.confirmAddMember == 'Engineer'
+        
     },
+    {
+        type: 'input',
+        name: 'school',
+        message: 'What school does this employee attend?',
+        validate: githubInput => {
+            if(githubInput) {
+                return true;
+            } else {
+                console.log('Please enter employee name!');
+                return false;
+            }
+        },
+        when: answers => answers.confirmAddMember == 'Intern'
+    }
 ];
 
+// Use the manager prompts to return the answers to the manager questions
 const promptManager = () => {
     return inquirer.prompt(managerQuestions);
 }
 
+// If they chose to finish, return immediately, otherwise run through the questions
 const promptMember = (memberData) => {
-    if (memberData.confirmAddMember == 'Finish building team') {
-        // console.log(memberData);
-        return memberData;
-    }
+    console.log(memberData);
 
     if(!memberData.team) {
         memberData.team = [];
         console.log('creating array');
     }
-
-    console.log(`
-    ====================
-    Adding a New ${memberData.confirmAddMember}
-    ====================
-    `);
 
     return inquirer.prompt(employeeQuestions)
     .then(newMemberData => {
@@ -142,5 +169,5 @@ const promptMember = (memberData) => {
 promptManager()
     .then(promptMember)
     .then(memberData => {
-        console.log(memberData);
+        return generatePage(memberData);
     })
