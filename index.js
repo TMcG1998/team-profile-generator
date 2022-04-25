@@ -148,11 +148,11 @@ const promptManager = () => {
 
 // If they chose to finish, return immediately, otherwise run through the questions
 const promptMember = (memberData) => {
-    console.log(memberData);
+    // console.log(memberData);
 
     if(!memberData.team) {
         memberData.team = [];
-        console.log('creating array');
+        // console.log('creating array');
     }
 
     return inquirer.prompt(employeeQuestions)
@@ -170,4 +170,14 @@ promptManager()
     .then(promptMember)
     .then(memberData => {
         return generatePage(memberData);
+    })
+    .then(pageHTML => {
+        return fs.writeFile('./dist/index.html', pageHTML, (err) => {
+            if(err) {
+                console.log(err);
+            } else {
+                console.log("File written successfully\n");
+                console.log("File location: ./dist/index.html");
+            }
+        });
     })

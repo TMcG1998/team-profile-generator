@@ -2,52 +2,23 @@ const Manager = require("../lib/Manager");
 const Intern = require('../lib/Intern');
 const Engineer = require('../lib/Engineer')
 
-const generateCards = employeeObject => {
-    if (employeeObject.confirmAddMember == "Engineer") {
-        const {employeeName, employeeId, employeeEmail, github} = employeeObject;
-        const engineer = new Engineer(employeeName, employeeId, employeeEmail, github);
-        return `
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-              <h5 class="card-title">${engineer.getName()}</h5>
-              <h6 class="card-text">${engineer.getRole()}</h6>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">${engineer.getId()}</li>
-              <li class="list-group-item">${engineer.getEmail()}</li>
-              <li class="list-group-item">${engineer.getGithub()}</li>
-            </ul>
-        </div>
-        `;
-    } else {
-        const {employeeName, employeeId, employeeEmail, school} = employeeObject;
-        const intern = new Intern(employeeName, employeeId, employeeEmail, school);
-        return `
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-              <h5 class="card-title">${intern.getName()}</h5>
-              <h6 class="card-text">${intern.getRole()}</h6>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">${intern.getId()}</li>
-              <li class="list-group-item">${intern.getEmail()}</li>
-              <li class="list-group-item">${intern.getSchool()}</li>
-            </ul>
-        </div>
-        `;
-    }
+    const generateEngineerCards = (name, id, email, github) => {
         
-}
+    }   
+
+    const generateInternCards = (name, id, email, school) => {
+        
+    }
 
 module.exports = templateData => {
     // Store the value of all team members
-    const {name, id, email, office, team } = templateData;
+    const {name, id, email, office, team} = templateData;
     // Remove the last element stored. In all cases, it will be an empty object that
     // will only store the value 'Finish building team'
     team.pop();
-    console.log(team);
     const manager = new Manager(name, id, email, office);
-    console.log(manager);
+    
+    console.log((team));
 
     return `
     <!DOCTYPE html>
@@ -57,7 +28,7 @@ module.exports = templateData => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Portfolio Demo</title>
+        <title>Team Builder Demo</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
         <link href="https://fonts.googleapis.com/css?family=Public+Sans:300i,300,500&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -71,9 +42,64 @@ module.exports = templateData => {
             </div>
         </header>
     <main class="container my-5">
-        ${team.forEach(element => {
-            generateCards(element)
-        })}
+    <div class="row">
+    <div class="col-sm-4 mb-3">
+    <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">${manager.getName()}</h5>
+              <h6 class="card-text">${manager.getRole()}</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">Employee ID: ${manager.getId()}</li>
+              <li class="list-group-item"><a href="mailto:${manager.getEmail()}">Email</a></li>
+              <li class="list-group-item">Office Number: ${manager.officeNumber}</li>
+            </ul>
+        </div>
+    </div>
+    ${team
+        .filter(({confirmAddMember}) => confirmAddMember == 'Intern')
+        .map(({ employeeName, employeeId, employeeEmail, school}) => {
+        const intern = new Intern(employeeName, employeeId, employeeEmail, school);
+        return `
+        <div class="col-sm-4 mb-3">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">${intern.getName()}</h5>
+                    <h6 class="card-text">${intern.getRole()}</h6>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Employee ID: ${intern.getId()}</li>
+                    <li class="list-group-item"><a href="mailto:${intern.getEmail()}">Email</a></li>
+                    <li class="list-group-item">School: ${intern.getSchool()}</li>
+                </ul>
+            </div>
+        </div>
+    `;
+})
+.join('')}
+        
+    ${team
+    .filter(({confirmAddMember}) => confirmAddMember == 'Engineer')
+    .map(({ employeeName, employeeId, employeeEmail, github }) => {
+    const engineer = new Engineer(employeeName, employeeId, employeeEmail, github);
+    return `
+    <div class="col-sm-4 mb-3">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">${engineer.getName()}</h5>
+                <h6 class="card-text">${engineer.getRole()}</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Employee ID:${engineer.getId()}</li>
+                <li class="list-group-item"><a href="mailto:${engineer.getEmail()}">Email</a></li>
+                <li class="list-group-item">GitHub: <a href="https://github.com/${engineer.getGithub()}" target="_blank">${engineer.getGithub()}</a></li>
+            </ul>
+        </div>
+    </div>
+    `;
+    })
+.join('')}
+    </div> 
     </main>
   </body>
   </html>
