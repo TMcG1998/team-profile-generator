@@ -90,7 +90,7 @@ module.exports = templateData => {
                 <h6 class="card-text">${engineer.getRole()}</h6>
             </div>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">Employee ID:${engineer.getId()}</li>
+                <li class="list-group-item">Employee ID: ${engineer.getId()}</li>
                 <li class="list-group-item"><a href="mailto:${engineer.getEmail()}">Email</a></li>
                 <li class="list-group-item">GitHub: <a href="https://github.com/${engineer.getGithub()}" target="_blank">${engineer.getGithub()}</a></li>
             </ul>
